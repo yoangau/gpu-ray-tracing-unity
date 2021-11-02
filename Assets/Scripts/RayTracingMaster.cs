@@ -5,7 +5,7 @@ public class RayTracingMaster : MonoBehaviour
     public ComputeShader RayTracingShader;
     private RenderTexture _target;
     private Camera _camera;
-
+    public Texture SkyboxTexture;
     private void Awake()
     {
         _camera = GetComponent<Camera>();
