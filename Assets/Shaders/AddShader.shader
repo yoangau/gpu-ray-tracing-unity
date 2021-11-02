@@ -36,6 +36,7 @@ Shader "Hidden/AddShader"
                 o.uv = v.uv;
                 return o;
             }
+            sampler2D _MainTex;
             float _Sample;
             float4 frag (v2f i) : SV_Target
             {
