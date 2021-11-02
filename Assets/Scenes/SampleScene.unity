@@ -228,6 +228,7 @@ GameObject:
   - component: {fileID: 963194227}
   - component: {fileID: 963194226}
   - component: {fileID: 963194229}
+  - component: {fileID: 963194230}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -314,3 +315,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   RayTracingShader: {fileID: 7200000, guid: efe9d01c7a671201f8c441b62c309b22, type: 3}
   SkyboxTexture: {fileID: 2800000, guid: 7d6f0b681980bbf6e8df4388f9f90426, type: 3}
+--- !u!114 &963194230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81ffb3de5c5aff7e5af21a2a0347a013, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 1
