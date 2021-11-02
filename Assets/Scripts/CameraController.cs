@@ -22,7 +22,7 @@ public class CameraController : MonoBehaviour
     /// <summary>
     /// Normal speed of camera movement.
     /// </summary>
-    public float movementSpeed = 10f;
+    public float movementSpeed = 20f;
 
     /// <summary>
     /// Speed of camera movement when shift is held down,
