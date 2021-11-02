@@ -3,8 +3,19 @@ using UnityEngine;
 public class RayTracingMaster : MonoBehaviour
 {
     public ComputeShader RayTracingShader;
-
     private RenderTexture _target;
+    private Camera _camera;
+
+    private void Awake()
+    {
+        _camera = GetComponent<Camera>();
+    }
+
+    private void SetShaderParameters()
+    {
+        RayTracingShader.SetMatrix("_CameraToWorld", _camera.cameraToWorldMatrix);
+        RayTracingShader.SetMatrix("_CameraInverseProjection", _camera.projectionMatrix.inverse);
+    }
 
     private void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
@@ -15,6 +26,9 @@ public class RayTracingMaster : MonoBehaviour
     {
         // Make sure we have a current render target
         InitRenderTexture();
+
+        // Set rendering parameters
+        SetShaderParameters();
 
         // Set the target and dispatch the compute shader
         RayTracingShader.SetTexture(0, "Result", _target);
