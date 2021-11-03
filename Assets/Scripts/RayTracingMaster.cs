@@ -20,12 +20,12 @@ public class RayTracingMaster : MonoBehaviour
     private uint _currentSample = 0;
     private Material _addMaterial;
     public Light DirectionalLight;
-
-    public Vector2 SphereRadius = new Vector2(3.0f, 8.0f);
-    public uint SpheresMax = 200;
+    private RenderTexture _converged;
+    public Vector2 SphereRadius = new Vector2(5.0f, 3.0f);
+    public uint SpheresMax = 10000;
     public float SpherePlacementRadius = 100.0f;
     private ComputeBuffer _sphereBuffer;
-
+    public int SphereSeed = 1223832719;
     private void Awake()
     {
         _camera = GetComponent<Camera>();
@@ -52,6 +52,8 @@ public class RayTracingMaster : MonoBehaviour
     }
     private void SetUpScene()
     {
+        // Random seed for deterministic scene
+        Random.InitState(SphereSeed);
         List<Sphere> spheres = new List<Sphere>();
         // Add a number of random spheres
         for (int i = 0; i < SpheresMax; i++)
@@ -117,7 +119,8 @@ public class RayTracingMaster : MonoBehaviour
         if (_addMaterial == null)
             _addMaterial = new Material(Shader.Find("Hidden/AddShader"));
         _addMaterial.SetFloat("_Sample", _currentSample);
-        Graphics.Blit(_target, destination, _addMaterial);
+        Graphics.Blit(_target, _converged, _addMaterial);
+        Graphics.Blit(_converged, destination);
         _currentSample++;
     }
 
