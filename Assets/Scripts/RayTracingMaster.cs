@@ -7,6 +7,8 @@ struct Sphere
     public float radius;
     public Vector3 albedo;
     public Vector3 specular;
+    public float smoothness;
+    public Vector3 emission;
 };
 
 
@@ -60,7 +62,6 @@ public class RayTracingMaster : MonoBehaviour
     }
     private void SetUpScene()
     {
-        // Random seed for deterministic scene
         Random.InitState(SphereSeed);
         List<Sphere> spheres = new List<Sphere>();
         // Add a number of random spheres
@@ -80,9 +81,20 @@ public class RayTracingMaster : MonoBehaviour
             }
             // Albedo and specular color
             Color color = Random.ColorHSV();
-            bool metal = Random.value < 0.5f;
-            sphere.albedo = metal ? Vector3.zero : new Vector3(color.r, color.g, color.b);
-            sphere.specular = metal ? new Vector3(color.r, color.g, color.b) : Vector3.one * 0.04f;
+            float chance = Random.value;
+            if (chance < 0.8f)
+            {
+                bool metal = chance < 0.4f;
+                sphere.albedo = metal ? Vector4.zero : new Vector4(color.r, color.g, color.b);
+                sphere.specular = metal ? new Vector4(color.r, color.g, color.b) : new Vector4(0.04f, 0.04f, 0.04f);
+                sphere.smoothness = Random.value;
+            }
+            else
+            {
+                Color emission = Random.ColorHSV(0, 1, 0, 1, 1.0f, 2.0f);
+                sphere.emission = new Vector3(emission.r, emission.g, emission.b);
+            }
+
             // Add the sphere to the list
             spheres.Add(sphere);
         SkipSphere:
@@ -93,7 +105,7 @@ public class RayTracingMaster : MonoBehaviour
             _sphereBuffer.Release();
         if (spheres.Count > 0)
         {
-            _sphereBuffer = new ComputeBuffer(spheres.Count, 40);
+            _sphereBuffer = new ComputeBuffer(spheres.Count, 56);
             _sphereBuffer.SetData(spheres);
         }
     }
@@ -144,7 +156,8 @@ public class RayTracingMaster : MonoBehaviour
         if (_target == null || _target.width != Screen.width || _target.height != Screen.height)
         {
             // Release render texture if we already have one
-            if (_target != null){
+            if (_target != null)
+            {
                 _target.Release();
                 _converged.Release();
             }
