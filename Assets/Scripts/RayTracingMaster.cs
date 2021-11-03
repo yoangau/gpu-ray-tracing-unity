@@ -26,17 +26,25 @@ public class RayTracingMaster : MonoBehaviour
     public float SpherePlacementRadius = 100.0f;
     private ComputeBuffer _sphereBuffer;
     public int SphereSeed = 1223832719;
+
+    private List<Transform> _transformsToWatch = new List<Transform>();
+
     private void Awake()
     {
         _camera = GetComponent<Camera>();
+        _transformsToWatch.Add(transform);
+        _transformsToWatch.Add(DirectionalLight.transform);
     }
 
     private void Update()
     {
-        if (transform.hasChanged)
+        foreach (Transform t in _transformsToWatch)
         {
-            _currentSample = 0;
-            transform.hasChanged = false;
+            if (t.hasChanged)
+            {
+                _currentSample = 0;
+                t.hasChanged = false;
+            }
         }
     }
 
@@ -81,8 +89,13 @@ public class RayTracingMaster : MonoBehaviour
             continue;
         }
         // Assign to compute buffer
-        _sphereBuffer = new ComputeBuffer(spheres.Count, 40);
-        _sphereBuffer.SetData(spheres);
+        if (_sphereBuffer != null)
+            _sphereBuffer.Release();
+        if (spheres.Count > 0)
+        {
+            _sphereBuffer = new ComputeBuffer(spheres.Count, 40);
+            _sphereBuffer.SetData(spheres);
+        }
     }
 
     private void SetShaderParameters()
@@ -93,8 +106,9 @@ public class RayTracingMaster : MonoBehaviour
         RayTracingShader.SetVector("_PixelOffset", new Vector2(Random.value, Random.value));
         Vector3 l = DirectionalLight.transform.forward;
         RayTracingShader.SetVector("_DirectionalLight", new Vector4(l.x, l.y, l.z, DirectionalLight.intensity));
-        RayTracingShader.SetBuffer(0, "_Spheres", _sphereBuffer);
         RayTracingShader.SetFloat("_Seed", Random.value);
+        if (_sphereBuffer != null)
+            RayTracingShader.SetBuffer(0, "_Spheres", _sphereBuffer);
     }
 
     private void OnRenderImage(RenderTexture source, RenderTexture destination)
@@ -130,14 +144,19 @@ public class RayTracingMaster : MonoBehaviour
         if (_target == null || _target.width != Screen.width || _target.height != Screen.height)
         {
             // Release render texture if we already have one
-            if (_target != null)
+            if (_target != null){
                 _target.Release();
-
+                _converged.Release();
+            }
             // Get a render target for Ray Tracing
             _target = new RenderTexture(Screen.width, Screen.height, 0,
                 RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
             _target.enableRandomWrite = true;
             _target.Create();
+            _converged = new RenderTexture(Screen.width, Screen.height, 0,
+                RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
+            _converged.enableRandomWrite = true;
+            _converged.Create();
             // Reset sampling
             _currentSample = 0;
         }
