@@ -21,7 +21,7 @@ public class RayTracingMaster : MonoBehaviour
     private Material _addMaterial;
     public Light DirectionalLight;
     private RenderTexture _converged;
-    public Vector2 SphereRadius = new Vector2(5.0f, 3.0f);
+    public Vector2 SphereRadius = new Vector2(5.0f, 30.0f);
     public uint SpheresMax = 10000;
     public float SpherePlacementRadius = 100.0f;
     private ComputeBuffer _sphereBuffer;
@@ -72,7 +72,7 @@ public class RayTracingMaster : MonoBehaviour
             }
             // Albedo and specular color
             Color color = Random.ColorHSV();
-            bool metal = Random.value < 0.0f;
+            bool metal = Random.value < 0.5f;
             sphere.albedo = metal ? Vector3.zero : new Vector3(color.r, color.g, color.b);
             sphere.specular = metal ? new Vector3(color.r, color.g, color.b) : Vector3.one * 0.04f;
             // Add the sphere to the list
