@@ -94,6 +94,7 @@ public class RayTracingMaster : MonoBehaviour
         Vector3 l = DirectionalLight.transform.forward;
         RayTracingShader.SetVector("_DirectionalLight", new Vector4(l.x, l.y, l.z, DirectionalLight.intensity));
         RayTracingShader.SetBuffer(0, "_Spheres", _sphereBuffer);
+        RayTracingShader.SetFloat("_Seed", Random.value);
     }
 
     private void OnRenderImage(RenderTexture source, RenderTexture destination)

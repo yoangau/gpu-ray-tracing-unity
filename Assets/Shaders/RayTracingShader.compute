@@ -11,6 +11,8 @@ static const float PI = 3.14159265f;
 
 float2 _PixelOffset;
 float4 _DirectionalLight;
+float2 _Pixel;
+float _Seed;
 
 struct Sphere
 {
@@ -28,6 +30,13 @@ struct Ray
     float3 direction;
     float3 energy;
 };
+
+float rand()
+{
+    float result = frac(sin(_Seed / 100.0f * dot(_Pixel, float2(12.9898f, 78.233f))) * 43758.5453f);
+    _Seed += 1.0f;
+    return result;
+}
 
 Ray CreateRay(float3 origin, float3 direction)
 {
@@ -151,6 +160,8 @@ float3 Shade(inout Ray ray, RayHit hit)
 [numthreads(8,8,1)] 
 void CSMain (uint3 id : SV_DispatchThreadID)
 {
+    // Set pixel
+    _Pixel = id.xy;
     // Get the dimensions of the RenderTexture
     uint width, height;
     Result.GetDimensions(width, height);
