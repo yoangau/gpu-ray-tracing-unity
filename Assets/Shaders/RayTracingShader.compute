@@ -16,6 +16,17 @@ float4 _DirectionalLight;
 float2 _Pixel;
 float _Seed;
 
+struct MeshObject
+{
+    float4x4 localToWorldMatrix;
+    int indices_offset;
+    int indices_count;
+};
+
+StructuredBuffer<MeshObject> _MeshObjects;
+StructuredBuffer<float3> _Vertices;
+StructuredBuffer<int> _Indices;
+
 struct Sphere
 {
     float3 position;
@@ -191,7 +202,7 @@ RayHit Trace(Ray ray)
             bestHit.emission = 0.0f;
         }
     }
-    
+
     return bestHit;
 }
 
